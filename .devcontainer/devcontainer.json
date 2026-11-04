@@ -1,0 +1,61 @@
+{
+	"name": "LSG Fit - Web",
+
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"docker-compose.yml"
+	],
+
+	"containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+  },
+
+	"mounts": [
+    "source=claude-code-config,target=/home/node/.claude,type=volume"
+  ],
+
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:2": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/stuartleeks/dev-container-features/shell-history:0": {},
+		"ghcr.io/christophermacgown/devcontainer-features/direnv:1": {},
+		"ghcr.io/nils-geistmann/devcontainers-features/zsh:0": {},
+		"ghcr.io/devcontainers-extra/features/zsh-plugins:0": {
+			"plugins": "npm git git-flow F-Sy-H zsh-autosuggestions zsh-completions",
+			"omzPlugins": "https://github.com/z-shell/F-Sy-H https://github.com/zsh-users/zsh-autosuggestions https://github.com/zsh-users/zsh-completions"
+		}
+	},
+
+	"postCreateCommand": {
+		"fix-permissions": "sudo chown -R node:node /home/node/.claude /home/node/.cache",
+		"install-claude-code": "curl -fsSL https://claude.ai/install.sh | bash",
+		"install-uv": "curl -LsSf https://astral.sh/uv/install.sh | sh",
+		"install-cloudflared": "sudo apt-get update && sudo apt-get install -y curl gnupg lsb-release && sudo mkdir -p --mode=0755 /etc/apt/keyrings && curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /etc/apt/keyrings/cloudflare-main.gpg >/dev/null && echo \"deb [signed-by=/etc/apt/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main\" | sudo tee /etc/apt/sources.list.d/cloudflared.list && sudo apt-get update && sudo apt-get install -y cloudflared"
+	},
+
+	"postStartCommand": {
+		"install-uv-tools": "uv tool install specify-cli && uv tool install --python 3.13 graphifyy",
+		"allow-direnv": "direnv allow"
+	},
+
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"editor.codeActionsOnSave": {
+					"source.fixAll.eslint": "explicit"
+				},
+				"js/ts.updateImportsOnFileMove.enabled": "always",
+				"js/ts.suggest.autoImports": true,
+				"js/ts.experimental.useTsgo": true
+			},
+			"extensions": [
+				"streetsidesoftware.code-spell-checker",
+				"dbaeumer.vscode-eslint",
+				"typescriptteam.native-preview"
+			]
+		}
+	}
+}
